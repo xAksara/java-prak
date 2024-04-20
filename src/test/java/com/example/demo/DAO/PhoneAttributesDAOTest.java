@@ -77,6 +77,7 @@ public class PhoneAttributesDAOTest {
         assertTrue(attributesList.stream().allMatch(o -> o.getMemorySize() <= 65));
 
     }
+    @Test
     void testFindByRamSizeGreaterThanEqual()
     {
         List<PhoneAttributes> attributesList = phoneAttributesDAO.findByRamSizeGreaterThanEqual(8);
