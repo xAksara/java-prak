@@ -1,6 +1,7 @@
 package com.example.demo.models;
 
-import javax.persistence.*;
+
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;

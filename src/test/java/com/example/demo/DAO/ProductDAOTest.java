@@ -13,8 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,7 +31,20 @@ public class ProductDAOTest {
     @Autowired
     private SessionFactory sessionFactory;
 
+    @Test
+    public void testFindByFilters() {
+        Map<String, String> filter1 = new HashMap<String, String>();
+        filter1.put("brand", "brand1");
+        filter1.put("category", categoryDAO.getById(1L).getCategory());
+        Collection<Product> products = productDAO.findByFilters(filter1);
 
+        Map<String, String> filter2 = new HashMap<String, String>();
+        filter2.put("brand", "brand1");
+        filter2.put("category", categoryDAO.getById(2L).getCategory());
+
+        products = productDAO.findByFilters(filter2);
+        assertTrue(products.isEmpty());
+    }
     @Test
     public void testFindByName() {
         Product foundProduct = productDAO.findByName("Product1");
@@ -136,7 +148,7 @@ public class ProductDAOTest {
     void beforeEach() {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
-            session.createSQLQuery("TRUNCATE prak.public.products RESTART IDENTITY CASCADE;").executeUpdate();
+            session.createNativeQuery("TRUNCATE TABLE prak.public.products RESTART IDENTITY CASCADE;").executeUpdate();
             session.getTransaction().commit();
 
         }

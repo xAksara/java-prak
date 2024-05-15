@@ -115,8 +115,8 @@ public class OrderDAOTest {
     void beforeEach() {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
-            session.createSQLQuery("TRUNCATE prak.public.orders RESTART IDENTITY CASCADE;").executeUpdate();
-            session.createSQLQuery("TRUNCATE prak.public.users RESTART IDENTITY CASCADE;").executeUpdate();
+            session.createNativeQuery("TRUNCATE TABLE prak.public.orders RESTART IDENTITY CASCADE;").executeUpdate();
+            session.createNativeQuery("TRUNCATE TABLE prak.public.users RESTART IDENTITY CASCADE;").executeUpdate();
             session.getTransaction().commit();
 
         }

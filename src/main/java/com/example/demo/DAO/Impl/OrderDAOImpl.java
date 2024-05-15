@@ -12,9 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
+
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -28,11 +30,14 @@ public class OrderDAOImpl extends CommonDAOImpl<Order, Long> implements OrderDAO
 
     @Override
     public List<Order> findByUser(User user) {
+        if (user == null) {
+            return Collections.emptyList();
+        }
         try (Session session = sessionFactory.openSession()) {
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
             CriteriaQuery<Order> criteriaQuery = criteriaBuilder.createQuery(Order.class);
             Root<Order> root = criteriaQuery.from(Order.class);
-            criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("user"), user));
+            criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("user").get("id"), user.getId()));
             return session.createQuery(criteriaQuery).getResultList();
         }
     }
@@ -65,7 +70,7 @@ public class OrderDAOImpl extends CommonDAOImpl<Order, Long> implements OrderDAO
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
             CriteriaQuery<Order> criteriaQuery = criteriaBuilder.createQuery(Order.class);
             Root<Order> root = criteriaQuery.from(Order.class);
-            criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("status"), status));
+            criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("status").get("id"), status.getId()));
             return session.createQuery(criteriaQuery).getResultList();
         }
     }
@@ -76,7 +81,7 @@ public class OrderDAOImpl extends CommonDAOImpl<Order, Long> implements OrderDAO
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
             CriteriaQuery<Order> criteriaQuery = criteriaBuilder.createQuery(Order.class);
             Root<Order> root = criteriaQuery.from(Order.class);
-            criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("paymentMethod"), paymentMethod));
+            criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("paymentMethod").get("id"), paymentMethod.getId()));
             return session.createQuery(criteriaQuery).getResultList();
         }
     }

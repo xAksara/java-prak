@@ -2,12 +2,13 @@ package com.example.demo.DAO.Impl;
 
 import com.example.demo.DAO.UserDAO;
 import com.example.demo.models.User;
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import org.hibernate.Session;
 
 import java.util.ArrayList;

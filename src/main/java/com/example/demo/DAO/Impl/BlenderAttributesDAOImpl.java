@@ -6,7 +6,7 @@ import com.example.demo.models.Product;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.*;
+import jakarta.persistence.criteria.*;
 
 import org.hibernate.Session;
 

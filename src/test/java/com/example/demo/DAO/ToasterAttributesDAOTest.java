@@ -97,8 +97,8 @@ public class ToasterAttributesDAOTest {
     void beforeEach() {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
-            session.createSQLQuery("TRUNCATE prak.public.products RESTART IDENTITY CASCADE;").executeUpdate();
-            session.createSQLQuery("TRUNCATE prak.public.attributes_toaster RESTART IDENTITY CASCADE;").executeUpdate();
+            session.createNativeQuery("TRUNCATE TABLE prak.public.products RESTART IDENTITY CASCADE;").executeUpdate();
+            session.createNativeQuery("TRUNCATE TABLE prak.public.attributes_toaster RESTART IDENTITY CASCADE;").executeUpdate();
             session.getTransaction().commit();
         }
 

@@ -1,6 +1,6 @@
 package com.example.demo.models;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity

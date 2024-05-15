@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+          crossorigin="anonymous"
+    >
+</head>
+<body>
+<div th:replace="general :: page-header"></div>
+
+<div class="container">
+    <h1>Admin Panel</h1>
+
+    <!-- Форма для поиска товара по ID -->
+    <form th:action="@{/admin/searchProduct/search}" method="get">
+        <div class="mb-3">
+            <label for="productId" class="form-label">Product ID:</label>
+            <input type="text" class="form-control" id="productId" name="productId">
+        </div>
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+
+    <!-- Информация о товаре -->
+    <div th:if="${product}" class="mt-4">
+        <h3>Product Info</h3>
+        <form id="productForm" method="get">
+            <input type="hidden" name="productId" th:value="${product.id}">
+            <div class="mb-3">
+                <label for="productName" class="form-label">Product Name:</label>
+                <input type="text" class="form-control" id="productName" name="productName" th:value="${product.name}">
+            </div>
+            <div class="mb-3">
+                <label for="productPrice" class="form-label">Product Price:</label>
+                <input type="text" class="form-control" id="productPrice" name="productPrice" th:value="${product.price}">
+            </div>
+            <div class="mb-3">
+                <label for="productBrand" class="form-label">Product Brand:</label>
+                <select class="form-select" id="productBrand" name="productBrand">
+                    <option th:each="brand : ${brands}"
+                            th:text="${brand}"
+                            th:selected="${brand == product.brand}"
+                    ></option>
+                </select>
+            </div>
+            <div th:each="attribute : ${attributes}" onsubmit="handleCheckboxValues()">
+                <div class="mb-3">
+                    <div th:if="${attribute.type == 'checkbox'}">
+                        <input type="checkbox" class="form-check-input" th:id="${attribute.name}" th:name="${attribute.name}" th:value="true" th:checked="${attribute.value == 'true'}">
+                        <label th:for="${attribute.name}" th:text="${attribute.label}"></label>
+                    </div>
+                    <div th:if="${attribute.type != 'checkbox'}">
+                        <label th:for="${attribute.name}" th:text="${attribute.label}"></label>
+                        <input class="form-control" th:id="${attribute.name}" th:name="${attribute.name}" th:type="${attribute.type}" th:value="${attribute.value}">
+                    </div>
+                </div>
+                <script>
+                    function handleCheckboxValues() {
+                        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+                        checkboxes.forEach(checkbox => {
+                            if (!checkbox.checked) {
+                                checkbox.checked = true;
+                                checkbox.value = "false";
+                            } else {
+                                checkbox.value = "true";
+                            }
+                        });
+                    }
+                </script>
+            </div>
+<!--            <div class="mb-3">-->
+<!--                <label for="productCategory" class="form-label">Product Category:</label>-->
+<!--                <select class="form-select" id="productCategory" name="productCategory" th:value="${product.category.category}">-->
+<!--                    <option th:each="category : ${categories}"-->
+<!--                            th:text="${category.category}"-->
+<!--                            th:selected="${category.category == product.category.category}"-->
+<!--                    ></option>-->
+<!--                </select>-->
+<!--            </div>-->
+<!--            <div id="productAttributes">-->
+<!--                <div th:if="${phoneAttributes}">-->
+<!--                    <div class="mb-3">-->
+<!--                        <label for="screenDiagonal">Screen Diagonal:</label>-->
+<!--                        <input type="text" class="form-control" id="screenDiagonal" name="screenDiagonal" th:value="${phoneAttributes.screenDiagonal}">-->
+<!--                    </div>-->
+<!--                    <div class="mb-3">-->
+<!--                        <label for="processor">Processor:</label>-->
+<!--                        <input type="text" class="form-control" id="processor" name="processor" th:value="${phoneAttributes.processor}">-->
+<!--                    </div>-->
+<!--                    <div class="mb-3">-->
+<!--                        <label for="memorySize">Memory Size:</label>-->
+<!--                        <input type="text" class="form-control" id="memorySize" name="memorySize" th:value="${phoneAttributes.memorySize}">-->
+<!--                    </div>-->
+<!--                    <div class="mb-3">-->
+<!--                        <label for="ramSize">RAM Size:</label>-->
+<!--                        <input type="text" class="form-control" id="ramSize" name="ramSize" th:value="${phoneAttributes.ramSize}">-->
+<!--                    </div>-->
+<!--                    <div class="mb-3">-->
+<!--                        <label for="screenType">Screen Type:</label>-->
+<!--                        <input type="text" class="form-control" id="screenType" name="screenType" th:value="${phoneAttributes.screenType}">-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<!--                <div th:if="${blenderAttributes}">-->
+<!--                    <div class="mb-3">-->
+<!--                        <label for="capacity">Capacity:</label>-->
+<!--                        <input type="text" class="form-control" id="capacity" name="capacity" th:value="${blenderAttributes.capacity}">-->
+<!--                    </div>-->
+<!--                    <div class="mb-3">-->
+<!--                        <label for="hasTimer">Has Timer:</label>-->
+<!--                        <input type="checkbox" class="form-check-input" id="hasTimer" name="hasTimer" th:checked="${blenderAttributes.hasTimer}">-->
+<!--                    </div>-->
+<!--                    <div class="mb-3">-->
+<!--                        <label for="powerOutput">Power Output:</label>-->
+<!--                        <input type="text" class="form-control" id="powerOutput" name="powerOutput" th:value="${blenderAttributes.powerOutput}">-->
+<!--                    </div>-->
+<!--                    <div class="mb-3">-->
+<!--                        <label for="numberOfSpeeds">Number of Speeds:</label>-->
+<!--                        <input type="text" class="form-control" id="numberOfSpeeds" name="numberOfSpeeds" th:value="${blenderAttributes.numberOfSpeeds}">-->
+<!--                    </div>-->
+<!--                    <div class="mb-3">-->
+<!--                        <label for="hasDisplay">Has Display:</label>-->
+<!--                        <input type="checkbox" class="form-check-input" id="hasDisplay" name="hasDisplay" th:checked="${blenderAttributes.hasDisplay}">-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div th:if="${toasterAttributes}">-->
+<!--                    <div class="mb-3">-->
+<!--                        <label for="powerOutput">Power Output:</label>-->
+<!--                        <input type="text" class="form-control" id="powerOutput" name="powerOutput" th:value="${toasterAttributes.powerOutput}">-->
+<!--                    </div>-->
+<!--                    <div class="mb-3">-->
+<!--                        <label for="numberOfSlots">Number of Slots:</label>-->
+<!--                        <input type="text" class="form-control" id="numberOfSlots" name="numberOfSlots" th:value="${toasterAttributes.numberOfSlots}">-->
+<!--                    </div>-->
+<!--                    <div class="mb-3">-->
+<!--                        <label for="hasDisplay">Has Display:</label>-->
+<!--                        <input type="text" class="form-control" id="hasDisplay" name="hasDisplay" th:value="${toasterAttributes.hasDisplay}">-->
+<!--                    </div>-->
+<!--                    <div class="mb-3">-->
+<!--                        <label for="hasTimer">Has Timer:</label>-->
+<!--                        <input type="text" class="form-control" id="hasTimer" name="hasTimer" th:value="${toasterAttributes.hasTimer}">-->
+<!--                    </div>-->
+<!--                    <div class="mb-3">-->
+<!--                        <label for="hasBreadSensor">Has Bread Sensor:</label>-->
+<!--                        <input type="text" class="form-control" id="hasBreadSensor" name="hasBreadSensor" th:value="${toasterAttributes.hasBreadSensor}">-->
+<!--                    </div>-->
+<!--                </div>-->
+
+
+<!--            </div>-->
+<!--            <div id="productAttributes" th:fragment="productAttributes">-->
+<!--                <div th:if="${attributes.getClass().getSimpleName() == 'PhoneAttributes'}">-->
+<!--                    <input type="hidden" id="productCategory" name="productCategory" th:value="phone">-->
+<!--                    <div class="mb-3">-->
+<!--                        <label for="screenDiagonal">Screen Diagonal:</label>-->
+<!--                        <input type="text" class="form-control" id="screenDiagonal" name="screenDiagonal">-->
+<!--                    </div>-->
+<!--                    <div class="mb-3">-->
+<!--                        <label for="processor">Processor:</label>-->
+<!--                        <input type="text" class="form-control" id="processor" name="processor">-->
+<!--                    </div>-->
+<!--                    <div class="mb-3">-->
+<!--                        <label for="memorySize">Memory Size:</label>-->
+<!--                        <input type="text" class="form-control" id="memorySize" name="memorySize">-->
+<!--                    </div>-->
+<!--                    <div class="mb-3">-->
+<!--                        <label for="ramSize">RAM Size:</label>-->
+<!--                        <input type="text" class="form-control" id="ramSize" name="ramSize">-->
+<!--                    </div>-->
+<!--                    <div class="mb-3">-->
+<!--                        <label for="screenType">Screen Type:</label>-->
+<!--                        <input type="text" class="form-control" id="screenType" name="screenType">-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<!--                <div th:if="${attributes.getClass().getSimpleName() == 'BlenderAttributes'}">-->
+<!--                    <input type="hidden" id="productCategory" name="productCategory" th:value="blender">-->
+<!--                    <div class="mb-3">-->
+<!--                        <label for="capacity">Capacity:</label>-->
+<!--                        <input type="text" class="form-control" id="capacity" name="capacity">-->
+<!--                    </div>-->
+<!--                    <div class="mb-3">-->
+<!--                        <label for="hasTimer">Has Timer:</label>-->
+<!--                        <input type="checkbox" class="form-check-input" id="hasTimer" name="hasTimer">-->
+<!--                    </div>-->
+<!--                    <div class="mb-3">-->
+<!--                        <label for="powerOutput">Power Output:</label>-->
+<!--                        <input type="text" class="form-control" id="powerOutput" name="powerOutput">-->
+<!--                    </div>-->
+<!--                    <div class="mb-3">-->
+<!--                        <label for="numberOfSpeeds">Number of Speeds:</label>-->
+<!--                        <input type="text" class="form-control" id="numberOfSpeeds" name="numberOfSpeeds">-->
+<!--                    </div>-->
+<!--                    <div class="mb-3">-->
+<!--                        <label for="hasDisplay">Has Display:</label>-->
+<!--                        <input type="checkbox" class="form-check-input" id="hasDisplay" name="hasDisplay">-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div th:if="${attributes.getClass().getSimpleName() == 'ToasterAttributes'}">-->
+<!--                    <input type="hidden" id="productCategory" name="productCategory" th:value="toaster">-->
+<!--                    <div class="mb-3">-->
+<!--                        <label for="powerOutput">Power Output:</label>-->
+<!--                        <input type="text" class="form-control" id="powerOutput" name="powerOutput">-->
+<!--                    </div>-->
+<!--                    <div class="mb-3">-->
+<!--                        <label for="numberOfSlots">Number of Slots:</label>-->
+<!--                        <input type="text" class="form-control" id="numberOfSlots" name="numberOfSlots">-->
+<!--                    </div>-->
+<!--                    <div class="mb-3">-->
+<!--                        <label for="hasDisplay">Has Display:</label>-->
+<!--                        <input type="checkbox" class="form-check-input" id="hasDisplay" name="hasDisplay">-->
+<!--                    </div>-->
+<!--                    <div class="mb-3">-->
+<!--                        <label for="hasTimer">Has Timer:</label>-->
+<!--                        <input type="checkbox" class="form-check-input" id="hasTimer" name="hasTimer">-->
+<!--                    </div>-->
+<!--                    <div class="mb-3">-->
+<!--                        <label for="hasBreadSensor">Has Bread Sensor:</label>-->
+<!--                        <input type="checkbox" class="form-check-input" id="hasBreadSensor" name="hasBreadSensor">-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+            <div class="mb-3">
+                <label for="productQuantity" class="form-label">Product Quantity:</label>
+                <input type="text" class="form-control" id="productQuantity" name="productQuantity" th:value="${product.quantity}">
+            </div>
+            <div class="mb-3">
+                <label for="productDescription" class="form-label">Product Description:</label>
+                <input type="text" class="form-control" id="productDescription" name="productDescription" th:value="${product.description}">
+            </div>
+
+            <!-- Кнопки для удаления и редактирования товара -->
+            <button type="submit" class="btn btn-danger" formaction="/admin/searchProduct/deleteProduct">Delete</button>
+            <button type="submit" class="btn btn-primary" formaction="/admin/searchProduct/editProduct">Edit</button>
+        </form>
+    </div>
+
+    <!-- Сообщение об ошибке -->
+    <div th:if="${errorMessage}" class="alert alert-danger mt-4" role="alert">
+        <span th:text="${errorMessage}"></span>
+    </div>
+</div>
+<div th:replace="general :: site-footer"></div>
+<div th:replace="general :: site-script"></div>
+</body>
+</html>

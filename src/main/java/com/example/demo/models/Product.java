@@ -1,13 +1,10 @@
 package com.example.demo.models;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Type;
 
-import java.math.BigDecimal;
-import java.util.Set;
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
+
 
 @Entity
 @Table(name = "products")

@@ -7,6 +7,7 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import com.example.demo.DAO.CommonDAO;
 import com.example.demo.models.CommonEntity;
+import org.hibernate.query.Query;
 
 import jakarta.persistence.criteria.CriteriaQuery;
 
@@ -37,7 +38,7 @@ public abstract class CommonDAOImpl<T extends CommonEntity<ID>, ID extends Seria
     @Override
     public Collection<T> getAll() {
         try (Session session = sessionFactory.openSession()) {
-            javax.persistence.criteria.CriteriaQuery<T> criteriaQuery = session.getCriteriaBuilder().createQuery(persistentClass);
+            CriteriaQuery<T> criteriaQuery = session.getCriteriaBuilder().createQuery(persistentClass);
             criteriaQuery.from(persistentClass);
             return session.createQuery(criteriaQuery).getResultList();
         }
@@ -48,7 +49,7 @@ public abstract class CommonDAOImpl<T extends CommonEntity<ID>, ID extends Seria
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
 
-            session.save(entity);
+            session.saveOrUpdate(entity);
             session.getTransaction().commit();
         }
     }
@@ -79,6 +80,17 @@ public abstract class CommonDAOImpl<T extends CommonEntity<ID>, ID extends Seria
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
             session.delete(entity);
+            session.getTransaction().commit();
+        }
+    }
+
+    @Override
+    public void deleteCollection(Collection<T> entities) {
+        try (Session session = sessionFactory.openSession()) {
+            session.beginTransaction();
+            for (T entity : entities) {
+                this.delete(entity);
+            }
             session.getTransaction().commit();
         }
     }
