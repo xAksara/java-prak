@@ -63,6 +63,7 @@ public class CartController {
             model.addAttribute("products", products);
             model.addAttribute("products_id", products_id);
         }
+        model.addAttribute("currentUser", getCurrentUser());
         model.addAttribute("user", user);
         return "cart";
     }

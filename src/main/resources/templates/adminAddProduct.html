@@ -15,112 +15,25 @@
 
 <div class="container">
   <h1>Admin Panel</h1>
-  <!-- Форма для добавления товара -->
   <div class="mt-4">
     <h3>Add Product</h3>
-    <form id="addProductForm" method="get" th:action="@{/admin/addProduct/add}">
+    <form id="addProductForm" method="post" th:action="@{/admin/addProduct/add}">
       <input type="hidden" id="category" name="category" th:value="${category}">
-      <div class="mb-3">
-        <label for="productName" class="form-label">Product Name:</label>
-        <input type="text" class="form-control" id="productName" name="productName">
-      </div>
-      <div class="mb-3">
-        <label for="productPrice" class="form-label">Product Price:</label>
-        <input type="text" class="form-control" id="productPrice" name="productPrice">
-      </div>
-      <div class="mb-3">
-        <label for="productBrand" class="form-label">Product Brand:</label>
-        <select class="form-select" id="productBrand" name="productBrand">
-          <option th:each="brand : ${brands}" th:text="${brand}"></option>
-        </select>
-      </div>
-      <div class="mb-3">
-        <label for="productQuantity" class="form-label">Product Quantity:</label>
-        <input type="text" class="form-control" id="productQuantity" name="productQuantity">
-      </div>
-      <div class="mb-3">
-        <label for="productDescription" class="form-label">Product Description:</label>
-        <input type="text" class="form-control" id="productDescription" name="productDescription">
-      </div>
-<!--      <div id="productAttributes">-->
-<!--        <div th:if="${attributes.getClass().getSimpleName() == 'PhoneAttributes'}">-->
-<!--          <input type="hidden" id="productCategory" name="productCategory" th:value="phone">-->
-<!--          <div class="mb-3">-->
-<!--            <label for="screenDiagonal">Screen Diagonal:</label>-->
-<!--            <input type="text" class="form-control" id="screenDiagonal" name="screenDiagonal">-->
-<!--          </div>-->
-<!--          <div class="mb-3">-->
-<!--            <label for="processor">Processor:</label>-->
-<!--            <input type="text" class="form-control" id="processor" name="processor">-->
-<!--          </div>-->
-<!--          <div class="mb-3">-->
-<!--            <label for="memorySize">Memory Size:</label>-->
-<!--            <input type="text" class="form-control" id="memorySize" name="memorySize">-->
-<!--          </div>-->
-<!--          <div class="mb-3">-->
-<!--            <label for="ramSize">RAM Size:</label>-->
-<!--            <input type="text" class="form-control" id="ramSize" name="ramSize">-->
-<!--          </div>-->
-<!--          <div class="mb-3">-->
-<!--            <label for="screenType">Screen Type:</label>-->
-<!--            <input type="text" class="form-control" id="screenType" name="screenType">-->
-<!--          </div>-->
-<!--        </div>-->
-
-<!--        <div th:if="${attributes.getClass().getSimpleName() == 'BlenderAttributes'}">-->
-<!--          <input type="hidden" id="productCategory" name="productCategory" th:value="blender">-->
-<!--          <div class="mb-3">-->
-<!--            <label for="capacity">Capacity:</label>-->
-<!--            <input type="text" class="form-control" id="capacity" name="capacity">-->
-<!--          </div>-->
-<!--          <div class="mb-3">-->
-<!--            <label for="hasTimer">Has Timer:</label>-->
-<!--            <input type="checkbox" class="form-check-input" id="hasTimer" name="hasTimer">-->
-<!--          </div>-->
-<!--          <div class="mb-3">-->
-<!--            <label for="powerOutput">Power Output:</label>-->
-<!--            <input type="text" class="form-control" id="powerOutput" name="powerOutput">-->
-<!--          </div>-->
-<!--          <div class="mb-3">-->
-<!--            <label for="numberOfSpeeds">Number of Speeds:</label>-->
-<!--            <input type="text" class="form-control" id="numberOfSpeeds" name="numberOfSpeeds">-->
-<!--          </div>-->
-<!--          <div class="mb-3">-->
-<!--            <label for="hasDisplay">Has Display:</label>-->
-<!--            <input type="checkbox" class="form-check-input" id="hasDisplay" name="hasDisplay">-->
-<!--          </div>-->
-<!--        </div>-->
-<!--        <div th:if="${attributes.getClass().getSimpleName() == 'ToasterAttributes'}">-->
-<!--          <input type="hidden" id="productCategory" name="productCategory" th:value="toaster">-->
-<!--          <div class="mb-3">-->
-<!--            <label for="powerOutput">Power Output:</label>-->
-<!--            <input type="text" class="form-control" id="powerOutput" name="powerOutput">-->
-<!--          </div>-->
-<!--          <div class="mb-3">-->
-<!--            <label for="numberOfSlots">Number of Slots:</label>-->
-<!--            <input type="text" class="form-control" id="numberOfSlots" name="numberOfSlots">-->
-<!--          </div>-->
-<!--          <div class="mb-3">-->
-<!--            <label for="hasDisplay">Has Display:</label>-->
-<!--            <input type="checkbox" class="form-check-input" id="hasDisplay" name="hasDisplay">-->
-<!--          </div>-->
-<!--          <div class="mb-3">-->
-<!--            <label for="hasTimer">Has Timer:</label>-->
-<!--            <input type="checkbox" class="form-check-input" id="hasTimer" name="hasTimer">-->
-<!--          </div>-->
-<!--          <div class="mb-3">-->
-<!--            <label for="hasBreadSensor">Has Bread Sensor:</label>-->
-<!--            <input type="checkbox" class="form-check-input" id="hasBreadSensor" name="hasBreadSensor">-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </div>-->
       <div th:each="attribute : ${attributes}" onsubmit="handleCheckboxValues()">
         <div class="mb-3">
           <div th:if="${attribute.type == 'checkbox'}">
             <input type="checkbox" class="form-check-input" th:id="${attribute.name}" th:name="${attribute.name}" th:value="true">
             <label th:for="${attribute.name}" th:text="${attribute.label}"></label>
           </div>
-          <div th:if="${attribute.type != 'checkbox'}">
+          <div th:if="${attribute.name == 'productBrand'}">
+            <div class="mb-3">
+              <label th:for="${attribute.name}" class="form-label">Product Brand:</label>
+              <select class="form-select" th:id="${attribute.name}" th:name="${attribute.name}">
+                <option th:each="brand : ${brands}" th:text="${brand}"></option>
+              </select>
+            </div>
+          </div>
+          <div th:if="${attribute.type != 'checkbox' && attribute.name != 'productBrand'}">
             <label th:for="${attribute.name}" th:text="${attribute.label}"></label>
             <input class="form-control" th:id="${attribute.name}" th:name="${attribute.name}" th:type="${attribute.type}">
           </div>

@@ -42,13 +42,18 @@
                 <a class="nav-link" id="personalLink" href="/personal">Личный кабинет</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" id="contactLink" href="/contact">Контакты</a>
+                <a class="nav-link" id="contactLink" href="/contacts">Контакты</a>
             </li>
+            <div th:if="${currentUser}">
+            <li class="nav-item" th:if="${currentUser.isAdmin()}">
+                <a class="nav-link" id="adminLink" href="/admin">Админ панель</a>
+            </li>
+            </div>
         </ul>
     </div>
 </nav>
 <!--end of page header-->
-<div th:fragment="site-footer" class="bottom-fixed indent" style="margin-top: 500">
+<div th:fragment="site-footer" class="bottom-fixed indent">
     <footer class="footer bg-dark">
         <div class="container">
             <p class="text-white">

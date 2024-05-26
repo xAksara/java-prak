@@ -86,7 +86,7 @@ public class ProductController {
 
         model.addAttribute("product", product);
         model.addAttribute("attributes", attributeMap);
-
+        model.addAttribute("currentUser", getCurrentUser());
         return "product";
     }
 
@@ -147,7 +147,8 @@ public class ProductController {
         Product product = productDAO.findById(productId);
         if (product.getQuantity() < quantity) {
             model.addAttribute("errorMessage", "Нет требуемого количества товара");
-            return "redirect:/product/" + productId;
+            model.addAttribute("currentUser", getCurrentUser());
+            return "product/" + productId;
         }
 
         // Создаем или обновляем запись о товаре в корзине

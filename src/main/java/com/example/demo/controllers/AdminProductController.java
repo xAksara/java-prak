@@ -13,13 +13,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.w3c.dom.Attr;
 
-import java.lang.reflect.Field;
 import java.util.*;
 import java.util.logging.Logger;
 
 @Controller
-public class AdminController {
+public class AdminProductController {
 
     @Autowired
     UserDAO userDAO = new UserDAOImpl();
@@ -50,17 +50,18 @@ public class AdminController {
             model.addAttribute("message", "У вас нет доступа к этой странице");
             return "redirect:/print_message";
         }
+        model.addAttribute("currentUser", getCurrentUser());
         return "admin";
     }
     @GetMapping("/admin/searchProduct")
     public String adminSearchProduct(Model model) {
-        // Этап 1: Проверка прав пользователя - эту часть ты выполняешь
         logger.info("0");
         if (!getCurrentUser().isAdmin()) {
             model.addAttribute("message", "У вас нет доступа к этой странице");
             return "redirect:/print_message";
         }
         logger.info("2");
+        model.addAttribute("currentUser", getCurrentUser());
         return "adminSearchProduct";
     }
 
@@ -74,6 +75,8 @@ public class AdminController {
         Product product = productDAO.getById(productId);
         if (product == null) {
             model.addAttribute("errorMessage", "Товар не найден");
+            model.addAttribute("currentUser", getCurrentUser());
+
             return "adminSearchProduct";
         }
         List<String> brands = customDBService.getBrands();
@@ -81,12 +84,14 @@ public class AdminController {
 //        Collection<Category> categories = categoryDAO.getAll();
         logger.info("3");
         String category = product.getCategory().getCategory();
-        List<Attribute> attributes = customDBService.getProductAttributes(product);
+        List<Attribute> attributes = customDBService.getAllProductAttributes(product);
 //        List<Attribute> attributes = customDBService.getAttributesByCategory(category);
         model.addAttribute("category", category);
         model.addAttribute("attributes", attributes);
         model.addAttribute("brands", brands);
         model.addAttribute("product", product);
+        model.addAttribute("currentUser", getCurrentUser());
+
         return "adminSearchProduct";
     }
 
@@ -100,23 +105,21 @@ public class AdminController {
         Product product = productDAO.getById(productId);
         if (product == null) {
             model.addAttribute("errorMessage", "Товар не найден");
+            model.addAttribute("currentUser", getCurrentUser());
+
             return "adminSearchProduct";
         }
         productDAO.delete(product);
         //TODO
         model.addAttribute("errorMessage", "Успешно!");
+        model.addAttribute("currentUser", getCurrentUser());
+
         return "adminSearchProduct"; // Редирект на страницу административной панели
     }
 
-    // Метод для обработки запроса на редактирование товара
     @GetMapping("/admin/searchProduct/editProduct")
     public String editProduct(@RequestParam Long productId,
                               @RequestParam String category,
-                              @RequestParam String productName,
-                              @RequestParam String productBrand,
-                              @RequestParam Long productPrice,
-                              @RequestParam Integer productQuantity,
-                              @RequestParam String productDescription,
                               @RequestParam Map<String, String> attributes,
                               Model model)
     {
@@ -127,30 +130,39 @@ public class AdminController {
         }
         Product product = productDAO.getById(productId);
         if (product == null) {
+            model.addAttribute("currentUser", getCurrentUser());
+
+
             model.addAttribute("message", "Ошибка! Нет товара с таким id");
             return "print_message";
         }
-        product.setName(productName);
-        product.setBrand(productBrand);
-        product.setCategory(
-                categoryDAO.getById(
-                        categoryDAO.getIdByName(category)
-                )
-        );
-        product.setPrice(productPrice);
-        product.setQuantity(productQuantity);
-        product.setDescription(productDescription);
-        productDAO.save(product);
+//        product.setName(productName);
+//        product.setBrand(productBrand);
+//        product.setCategory(
+//                categoryDAO.getById(
+//                        categoryDAO.getIdByName(category)
+//                )
+//        );
+//        product.setPrice(productPrice);
+//        product.setQuantity(productQuantity);
+//        product.setDescription(productDescription);
+//        productDAO.save(product);
 
-        boolean success = customDBService.setProductAttributes(category, product, attributes);
+        boolean success = customDBService.saveProductWithAttributes(category, product, attributes);
 
         if (!success) {
             model.addAttribute("message", "ERROR");
+            model.addAttribute("currentUser", getCurrentUser());
+
+
             return "print_message";
+
         }
 
 //        model.addAttribute("product", product);
         //TODO error
+        model.addAttribute("currentUser", getCurrentUser());
+
         model.addAttribute("errorMessage", "Успех!");
         return "adminSearchProduct";
     }
@@ -162,6 +174,8 @@ public class AdminController {
             return "print_message";
         }
         List<String> categories = customDBService.getCategories();
+        model.addAttribute("currentUser", getCurrentUser());
+
         model.addAttribute("categories", categories);
         return "adminChoseCategory";
     }
@@ -173,23 +187,23 @@ public class AdminController {
             return "print_message";
         }
         List<String> brands = customDBService.getBrands();
-        List<Attribute> attributes = customDBService.getAttributesByCategory(category);
+        List<Attribute> attributes = customDBService.getEmptyProductAttributes(category);
         logger.info("adding" + category);
+        for (Attribute a : attributes) {
+            logger.info(a.getName());
+        }
         model.addAttribute("brands", brands);
         model.addAttribute("attributes", attributes);
         model.addAttribute("category", category);
         model.addAttribute("selectedFilters", null);
+        model.addAttribute("currentUser", getCurrentUser());
+
         return "adminAddProduct";
     }
 
-    @GetMapping("/admin/addProduct/add")
+    @PostMapping("/admin/addProduct/add")
     public String addProduct(
-            @RequestParam String productName,
-            @RequestParam Long productPrice,
-            @RequestParam String productBrand,
             @RequestParam String category,
-            @RequestParam int productQuantity,
-            @RequestParam String productDescription,
             @RequestParam Map<String, String> attributes,
             Model model) {
         if (!getCurrentUser().isAdmin()) {
@@ -197,23 +211,16 @@ public class AdminController {
             return "print_message";
         }
         Product product = new Product();
-        product.setName(productName);
-        product.setBought(0);
-        product.setBrand(productBrand);
-        product.setPrice(productPrice);
-        product.setCategory(categoryDAO.getById(categoryDAO.getIdByName(category)));
-        product.setQuantity(productQuantity);
-        product.setDescription(productDescription);
-        product.setImgPath("path/to/img");
-
-        productDAO.save(product);
-
-        boolean success = customDBService.setProductAttributes(category, product, attributes);
+        boolean success = customDBService.saveProductWithAttributes(category, product, attributes);
 
         if (!success) {
             model.addAttribute("message", "ERROR");
+            model.addAttribute("currentUser", getCurrentUser());
+
             return "print_message";
         }
+        model.addAttribute("currentUser", getCurrentUser());
+
         return "admin";
     }
 

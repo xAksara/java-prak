@@ -58,6 +58,7 @@ public class PersonalController {
         model.addAttribute("surname", user.getSurname());
         model.addAttribute("birthday", user.getBirthday());
         model.addAttribute("login", user.getLogin());
+        model.addAttribute("currentUser", getCurrentUser());
         return "/personal";
     }
 }

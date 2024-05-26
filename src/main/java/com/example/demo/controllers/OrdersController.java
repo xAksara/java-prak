@@ -24,19 +24,14 @@ import java.util.logging.Logger;
 
 @Controller
 public class OrdersController {
-
     @Autowired
     UserDAO userDAO = new UserDAOImpl();
-
     @Autowired
     CartDAO cartDAO = new CartDAOImpl();
-
     @Autowired
     ProductDAO productDAO = new ProductDAOImpl();
-
     @Autowired
     OrderDAO orderDAO = new OrderDAOImpl();
-
     @Autowired
     OrderProductDAO orderProductDAO = new OrderProductDAOImpl();
 
@@ -64,19 +59,21 @@ public class OrdersController {
         Order order = orderDAO.getById(id);
         if (order == null) {
             model.addAttribute("message", "Заказ не найден");
+            model.addAttribute("currentUser", getCurrentUser());
             return "print_message";
         }
 
         User auth_user = getCurrentUser();
         if (!Objects.equals(order.getUser().getId(), auth_user.getId())) {
             model.addAttribute("message", "Вы не имеете доступа к этой странице.");
+            model.addAttribute("currentUser", getCurrentUser());
             return "print_message";
         }
 
         List<OrderProduct> orderProducts = orderProductDAO.findByOrder(order);
         model.addAttribute("order", order);
         model.addAttribute("orderProducts", orderProducts);
-
+        model.addAttribute("currentUser", getCurrentUser());
         return "order_details";
     }
 }

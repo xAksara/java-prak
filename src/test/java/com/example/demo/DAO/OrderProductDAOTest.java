@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -97,7 +98,7 @@ public class OrderProductDAOTest {
         user1.setLastName("lastName1");
         user1.setFirstName("firstName1");
         user1.setSurname("surname1");
-        user1.setBirthday(Date.valueOf("2001-01-01"));
+        user1.setBirthday(LocalDate.parse("2001-01-01"));
         user1.setPhone("1234567890");
         user1.setEmail("user1@example.com");
         user1.setAddress("123 Main Street, City, Country");
@@ -110,7 +111,7 @@ public class OrderProductDAOTest {
         user2.setLastName("lastName2");
         user2.setFirstName("firstName2");
         user2.setSurname("surname2");
-        user2.setBirthday(Date.valueOf("2002-02-02")); // Пример даты рождения
+        user2.setBirthday(LocalDate.parse("2002-02-02")); // Пример даты рождения
         user2.setPhone("2234567890");
         user2.setEmail("user2@example.com");
         user2.setAddress("223 Main Street, City, Country");
@@ -123,7 +124,7 @@ public class OrderProductDAOTest {
         user3.setLastName("lastName3");
         user3.setFirstName("firstName3");
         user3.setSurname("surname3");
-        user3.setBirthday(Date.valueOf("2003-03-03")); // Пример даты рождения
+        user3.setBirthday(LocalDate.parse("2003-03-03")); // Пример даты рождения
         user3.setPhone("3234567890");
         user3.setEmail("user3@example.com");
         user3.setAddress("323 Main Street, City, Country");

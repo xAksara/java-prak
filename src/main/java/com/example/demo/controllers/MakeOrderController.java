@@ -51,7 +51,8 @@ public class MakeOrderController {
         List<Cart> carts = cartDAO.findByUser(user);
         if (carts.isEmpty()) {
             model.addAttribute("message", "Ваша корзина пуста");
-            return "redirect:/print_message";
+            model.addAttribute("currentUser", getCurrentUser());
+            return "print_message";
         } else {
             Map<String, List<Long>> products = new HashMap<>();
             long summ = 0L;
@@ -66,10 +67,12 @@ public class MakeOrderController {
 
                 products.put(productName, productInfo);
             }
+
             model.addAttribute("products", products);
             model.addAttribute("summ", summ);
         }
         model.addAttribute("user", user);
+        model.addAttribute("currentUser", getCurrentUser());
         return "makeOrder";
     }
 
@@ -80,11 +83,13 @@ public class MakeOrderController {
 
         if (carts.isEmpty()) {
             model.addAttribute("message", "Корзина пуста!");
-            return "redirect:/print_message";
+            model.addAttribute("currentUser", getCurrentUser());
+            return "print_message";
         }
 
         customDBService.confirmOrder(user, deliveryDate, paymentMethod, carts);
         model.addAttribute("message", "Спасибо за заказ!");
-        return "redirect:/print_message";
+        model.addAttribute("currentUser", getCurrentUser());
+        return "print_message";
     }
 }
